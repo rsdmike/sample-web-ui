@@ -3,8 +3,7 @@
 * SPDX-License-Identifier: Apache-2.0
 **********************************************************************/
 import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core'
-// import { AMTDesktop, ConsoleLogger } from 'ui-toolkit'
-// import { LogLevel } from 'ui-toolkit/dist/src/core/ILogger'
+import { AMTDesktop, ConsoleLogger, ILogger, Protocol, AMTKvmDataRedirector, DataProcessor, IDataProcessor, MouseHelper, KeyBoardHelper } from 'ui-toolkit'
 @Component({
   selector: 'app-kvm',
   templateUrl: './kvm.component.html',
@@ -13,38 +12,89 @@ import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, View
 export class KvmComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas', { static: false }) canvas: ElementRef | undefined
   public context!: CanvasRenderingContext2D
-  // logger: ConsoleLogger | null = null
-
-  // constructor () { }
 
   // setting a width and height for the canvas
   @Input() public width = 400
   @Input() public height = 400
+  @Input() deviceUuid: string = ''
   module: any
+  redirector: any
+  dataProcessor!: IDataProcessor | null
+  mouseHelper!: MouseHelper
+  keyboardHelper!: KeyBoardHelper
+  logger!: ILogger
+  kvmState: number = 0
+  btnText: string = 'Connect'
 
   ngOnInit (): void {
-    // this.logger = new ConsoleLogger(1)
-
+    this.logger = new ConsoleLogger(1)
   }
 
   ngAfterViewInit (): void {
-    this.context = this.canvas?.nativeElement.getContext('2d')
-
-    // this.module = new AMTDesktop(this.logger as any, this.context)
+    this.instantiate()
+    this.autoConnect()
   }
 
-  @HostListener('mouseup')
-  onMouseup (): void {
-    console.log('mouseup')
+  instantiate (): void {
+    this.context = this.canvas?.nativeElement.getContext('2d')
+    this.redirector = new AMTKvmDataRedirector(this.logger, Protocol.KVM, new FileReader(), this.deviceUuid , 16994, '', '', 0, 0, '13.76.223.84:3000/relay')
+    this.module = new AMTDesktop(this.logger as any, this.context)
+    this.dataProcessor = new DataProcessor(this.logger, this.redirector, this.module)
+    this.mouseHelper = new MouseHelper(this.module, this.redirector, 200)
+    this.keyboardHelper = new KeyBoardHelper(this.module, this.redirector)
+
+    this.redirector.onProcessData = this.module.processData.bind(this.module)
+    this.redirector.onStart = this.module.start.bind(this.module)
+    this.redirector.onNewState = this.module.onStateChange.bind(this.module)
+    this.redirector.onSendKvmData = this.module.onSendKvmData.bind(this.module)
+    this.redirector.onStateChanged = this.onConnectionStateChange
+    this.module.onProcessData = this.dataProcessor.processData.bind(this.dataProcessor)
+    this.module.onSend = this.redirector.send.bind(this.redirector)
+  }
+
+  autoConnect (): void {
+    console.info('autoconnect', this.deviceUuid)
+    if (this.redirector !== null) {
+      this.module.bpp = 2
+      this.redirector.start(WebSocket)
+      this.keyboardHelper.GrabKeyInput()
+    }
+  }
+
+  @HostListener('mouseup', ['$event'])
+  onMouseup (event: MouseEvent): void {
+    this.mouseHelper.mouseup(event)
   }
 
   @HostListener('mousemove', ['$event'])
   onMousemove (event: MouseEvent): void {
-    console.log('mouseMove')
+    this.mouseHelper.mousemove(event)
   }
 
   @HostListener('mousedown', ['$event'])
   onMousedown (event: MouseEvent): void {
-    console.log('mousedown')
+    this.mouseHelper.mousedown(event)
+  }
+
+  reset = (): void => {
+    this.redirector = null
+    this.module = null
+    this.dataProcessor = null
+    // this.context.clearRect(0, 0, 400, 400)
+    this.height = 400
+    this.width = 400
+    this.instantiate()
+  }
+
+  stopKvm = (): void => {
+    this.redirector.stop()
+    this.keyboardHelper.UnGrabKeyInput()
+    this.reset()
+  }
+
+  onConnectionStateChange = (redirector: any, state: number): any => {
+    this.kvmState = state
+    this.kvmState === 2 ? this.btnText = 'Disconnect' : this.btnText = 'Connect'
+    console.info('onConnectionStateChange', this.kvmState)
   }
 }

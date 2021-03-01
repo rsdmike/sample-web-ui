@@ -8,8 +8,8 @@
 
 export const environment = {
   production: false,
-  mpsServer: 'https://192.168.1.34:3000',
-  rpsServer: 'https://192.168.1.34:8081',
+  mpsServer: 'https://13.76.223.84:3000',
+  rpsServer: 'https://13.76.223.84:8081',
   mpsAPIKey: 'APIKEYFORMPS123!',
   rpsAPIKey: 'APIKEYFORRPS123!'
 }
