@@ -1,0 +1,274 @@
+<mat-toolbar>{{ 'enterpriseAssistant.title.value' | translate }}</mat-toolbar>
+
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="ea-page flex flex-col">
+  <p class="intro">{{ 'enterpriseAssistant.intro.value' | translate }}</p>
+
+  @if (errorMessages().length > 0) {
+    <div class="error-messages-container" data-cy="eaErrors">
+      @for (item of errorMessages(); track $index) {
+        <div class="result-row">
+          <mat-icon class="mat-text-error">error</mat-icon>
+          <span class="error-messages">{{ item }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ 'enterpriseAssistant.general.title.value' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="flex flex-col">
+      <mat-slide-toggle formControlName="enabled" data-cy="eaEnabled">
+        {{ 'enterpriseAssistant.enabled.value' | translate }}
+      </mat-slide-toggle>
+
+      <div class="field-with-action">
+        <mat-form-field class="flex-1">
+          <mat-label>{{ 'enterpriseAssistant.url.value' | translate }}</mat-label>
+          <input matInput formControlName="url" autocomplete="off" spellcheck="false" data-cy="eaUrl" />
+          <mat-hint>{{ 'enterpriseAssistant.urlHint.value' | translate }}</mat-hint>
+        </mat-form-field>
+        <button type="button" mat-button (click)="useThisConsole()" data-cy="eaUseThisConsole">
+          {{ 'enterpriseAssistant.useThisConsole.value' | translate }}
+        </button>
+      </div>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.username.value' | translate }}</mat-label>
+        <input matInput formControlName="username" autocomplete="off" data-cy="eaUsername" />
+        <mat-error>{{ 'enterpriseAssistant.requiredWhenEnabled.value' | translate }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.password.value' | translate }}</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          autocomplete="new-password"
+          data-cy="eaPassword"
+          [placeholder]="passwordSet() ? ('enterpriseAssistant.passwordKeep.value' | translate) : ''" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.deviceNameType.label.value' | translate }}</mat-label>
+        <mat-select formControlName="deviceNameType" data-cy="eaDeviceNameType">
+          @for (option of deviceNameTypes; track option.value) {
+            <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card formGroupName="activeDirectory">
+    <mat-card-header>
+      <mat-card-title>{{ 'enterpriseAssistant.ad.title.value' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="flex flex-col">
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ad.domain.value' | translate }}</mat-label>
+        <input matInput formControlName="domain" autocomplete="off" spellcheck="false" data-cy="eaDomain" />
+        <mat-error>{{ 'enterpriseAssistant.requiredWhenEnabled.value' | translate }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ad.server.value' | translate }}</mat-label>
+        <input matInput formControlName="server" autocomplete="off" spellcheck="false" data-cy="eaServer" />
+        <mat-hint>{{ 'enterpriseAssistant.ad.serverHint.value' | translate }}</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ad.bindUsername.value' | translate }}</mat-label>
+        <input matInput formControlName="bindUsername" autocomplete="off" spellcheck="false" data-cy="eaBindUsername" />
+        <mat-hint>{{ 'enterpriseAssistant.ad.bindUsernameHint.value' | translate }}</mat-hint>
+        <mat-error>{{ 'enterpriseAssistant.requiredWhenEnabled.value' | translate }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ad.bindPassword.value' | translate }}</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="bindPassword"
+          autocomplete="new-password"
+          data-cy="eaBindPassword"
+          [placeholder]="bindPasswordSet() ? ('enterpriseAssistant.passwordKeep.value' | translate) : ''" />
+        <mat-error>{{ 'enterpriseAssistant.requiredWhenEnabled.value' | translate }}</mat-error>
+      </mat-form-field>
+
+      <div class="field-with-action">
+        <mat-form-field class="flex-1">
+          <mat-label>{{ 'enterpriseAssistant.ad.computerOU.value' | translate }}</mat-label>
+          <input
+            matInput
+            formControlName="computerOU"
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="eaComputerOU"
+            [matAutocomplete]="ouAuto" />
+          <mat-autocomplete #ouAuto="matAutocomplete">
+            @for (container of filteredContainers(); track container) {
+              <mat-option [value]="container">{{ container }}</mat-option>
+            }
+          </mat-autocomplete>
+          <mat-hint>{{ 'enterpriseAssistant.ad.computerOUHint.value' | translate }}</mat-hint>
+        </mat-form-field>
+        <button type="button" mat-button (click)="loadContainers()" [disabled]="isLoading()" data-cy="eaLoadContainers">
+          {{ 'enterpriseAssistant.loadFromAD.value' | translate }}
+        </button>
+      </div>
+
+      <div class="field-with-action">
+        <mat-form-field class="flex-1">
+          <mat-label>{{ 'enterpriseAssistant.ad.securityGroups.value' | translate }}</mat-label>
+          <mat-chip-grid #groupList data-cy="eaSecurityGroups">
+            @for (group of form.controls.activeDirectory.controls.securityGroups.value; track group) {
+              <mat-chip-row (removed)="removeGroup(group)">
+                {{ group }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip-row>
+            }
+            <input
+              #groupInput
+              data-cy="eaGroupInput"
+              [matChipInputFor]="groupList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matAutocomplete]="groupAuto"
+              (matChipInputTokenEnd)="addGroup($event)" />
+          </mat-chip-grid>
+          <mat-autocomplete #groupAuto="matAutocomplete" (optionSelected)="groupSelected($event, groupInput)">
+            @for (group of groups(); track group) {
+              <mat-option [value]="group">{{ group }}</mat-option>
+            }
+          </mat-autocomplete>
+          <mat-hint>{{ 'enterpriseAssistant.ad.securityGroupsHint.value' | translate }}</mat-hint>
+        </mat-form-field>
+        <button type="button" mat-button (click)="loadGroups()" [disabled]="isLoading()" data-cy="eaLoadGroups">
+          {{ 'enterpriseAssistant.loadFromAD.value' | translate }}
+        </button>
+      </div>
+
+      <mat-checkbox formControlName="insecureSkipVerify" data-cy="eaInsecureSkipVerify">
+        {{ 'enterpriseAssistant.ad.insecureSkipVerify.value' | translate }}
+      </mat-checkbox>
+      @if (form.controls.activeDirectory.controls.insecureSkipVerify.value) {
+        <div class="warning" data-cy="eaInsecureWarning">
+          <mat-icon class="mat-text-error">warning</mat-icon>
+          <span>{{ 'enterpriseAssistant.ad.insecureSkipVerifyWarning.value' | translate }}</span>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card formGroupName="certificateAuthority">
+    <mat-card-header>
+      <mat-card-title>{{ 'enterpriseAssistant.ca.title.value' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="flex flex-col">
+      <div class="field-with-action">
+        @if (authorities().length > 0) {
+          <mat-form-field class="flex-1">
+            <mat-label>{{ 'enterpriseAssistant.ca.authority.value' | translate }}</mat-label>
+            <mat-select
+              [value]="selectedAuthority()"
+              (selectionChange)="selectAuthority($event.value)"
+              data-cy="eaAuthority">
+              @for (authority of authorities(); track authority.name) {
+                <mat-option [value]="authority">{{ authority.name }} ({{ authority.host }})</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        } @else {
+          <span class="flex-1">{{ 'enterpriseAssistant.ca.authorityHint.value' | translate }}</span>
+        }
+        <button
+          type="button"
+          mat-button
+          (click)="loadAuthorities()"
+          [disabled]="isLoading()"
+          data-cy="eaLoadAuthorities">
+          {{ 'enterpriseAssistant.loadFromAD.value' | translate }}
+        </button>
+      </div>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ca.host.value' | translate }}</mat-label>
+        <input matInput formControlName="host" autocomplete="off" spellcheck="false" data-cy="eaCaHost" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ca.name.value' | translate }}</mat-label>
+        <input matInput formControlName="name" autocomplete="off" spellcheck="false" data-cy="eaCaName" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ca.template.value' | translate }}</mat-label>
+        @if (templates().length > 0) {
+          <mat-select formControlName="template" data-cy="eaTemplateSelect">
+            @for (template of templates(); track template) {
+              <mat-option [value]="template">{{ template }}</mat-option>
+            }
+          </mat-select>
+        } @else {
+          <input matInput formControlName="template" autocomplete="off" spellcheck="false" data-cy="eaTemplate" />
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'enterpriseAssistant.ca.commonName.value' | translate }}</mat-label>
+        <mat-select formControlName="commonName" data-cy="eaCommonName">
+          @for (option of nameFields; track option.value) {
+            <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="alt-names" role="group" [attr.aria-label]="'enterpriseAssistant.ca.altNames.value' | translate">
+        <span class="alt-names-label">{{ 'enterpriseAssistant.ca.altNames.value' | translate }}</span>
+        @for (option of nameFields; track option.value) {
+          <mat-checkbox
+            [checked]="isAltName(option.value)"
+            (change)="toggleAltName(option.value, $event.checked)"
+            [attr.data-cy]="'eaAltName-' + option.value">
+            {{ option.label | translate }}
+          </mat-checkbox>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    @if (testResult(); as result) {
+      <mat-card-content class="test-results" data-cy="eaTestResults">
+        <div class="result-row" data-cy="eaTestAD">
+          <mat-icon [class.mat-text-error]="!result.activeDirectory.ok">
+            {{ result.activeDirectory.ok ? 'check_circle' : 'error' }}
+          </mat-icon>
+          <strong>{{ 'enterpriseAssistant.ad.title.value' | translate }}</strong>
+          <span>{{ result.activeDirectory.message }}</span>
+        </div>
+        <div class="result-row" data-cy="eaTestCA">
+          <mat-icon [class.mat-text-error]="!result.certificateAuthority.ok">
+            {{ result.certificateAuthority.ok ? 'check_circle' : 'error' }}
+          </mat-icon>
+          <strong>{{ 'enterpriseAssistant.ca.title.value' | translate }}</strong>
+          <span>{{ result.certificateAuthority.message }}</span>
+        </div>
+      </mat-card-content>
+    }
+    <mat-card-actions align="end">
+      <button type="button" mat-button (click)="testConnection()" [disabled]="isLoading()" data-cy="eaTest">
+        {{ 'enterpriseAssistant.test.value' | translate }}
+      </button>
+      <button type="submit" mat-flat-button [disabled]="!canSave" data-cy="eaSave">
+        {{ 'common.save.value' | translate }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</form>

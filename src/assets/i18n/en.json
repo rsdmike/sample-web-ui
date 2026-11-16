@@ -1217,6 +1217,198 @@
     "description": "Failed to load domains message",
     "value": "Failed to load domains"
   },
+  "enterpriseAssistant.title": {
+    "description": "Enterprise Assistant page title and navbar entry",
+    "value": "Enterprise Assistant"
+  },
+  "enterpriseAssistant.intro": {
+    "description": "Enterprise Assistant page introduction",
+    "value": "Console acts as the Enterprise Assistant: it registers devices in Active Directory and requests their 802.1x certificates from the Certificate Authority."
+  },
+  "enterpriseAssistant.general.title": {
+    "description": "Enterprise Assistant general settings section title",
+    "value": "General"
+  },
+  "enterpriseAssistant.enabled": {
+    "description": "Enterprise Assistant enabled toggle label",
+    "value": "Enable Enterprise Assistant"
+  },
+  "enterpriseAssistant.url": {
+    "description": "Enterprise Assistant URL field label",
+    "value": "Enterprise Assistant URL"
+  },
+  "enterpriseAssistant.urlHint": {
+    "description": "Enterprise Assistant URL field hint",
+    "value": "URL rpc-go uses to reach the Enterprise Assistant: <this Console origin>/ea"
+  },
+  "enterpriseAssistant.useThisConsole": {
+    "description": "Button that fills the Enterprise Assistant URL with this Console's address",
+    "value": "Use this Console"
+  },
+  "enterpriseAssistant.username": {
+    "description": "Enterprise Assistant username field label",
+    "value": "Username"
+  },
+  "enterpriseAssistant.password": {
+    "description": "Enterprise Assistant password field label",
+    "value": "Password"
+  },
+  "enterpriseAssistant.passwordKeep": {
+    "description": "Placeholder for a password field when a password is already stored",
+    "value": "Saved; leave blank to keep"
+  },
+  "enterpriseAssistant.deviceNameType.label": {
+    "description": "Device name type field label",
+    "value": "Device name"
+  },
+  "enterpriseAssistant.deviceNameType.hostname": {
+    "description": "Device name type option: host name",
+    "value": "Host name"
+  },
+  "enterpriseAssistant.deviceNameType.nodeid": {
+    "description": "Device name type option: node ID",
+    "value": "Node ID"
+  },
+  "enterpriseAssistant.requiredWhenEnabled": {
+    "description": "Error for a field required while the Enterprise Assistant is enabled",
+    "value": "Required when the Enterprise Assistant is enabled"
+  },
+  "enterpriseAssistant.ad.title": {
+    "description": "Active Directory section title",
+    "value": "Active Directory"
+  },
+  "enterpriseAssistant.ad.domain": {
+    "description": "Active Directory domain field label",
+    "value": "Domain"
+  },
+  "enterpriseAssistant.ad.server": {
+    "description": "Active Directory server field label",
+    "value": "Server"
+  },
+  "enterpriseAssistant.ad.serverHint": {
+    "description": "Active Directory server field hint",
+    "value": "Leave blank to discover a domain controller via DNS"
+  },
+  "enterpriseAssistant.ad.bindUsername": {
+    "description": "Active Directory bind username field label",
+    "value": "Bind username (UPN)"
+  },
+  "enterpriseAssistant.ad.bindUsernameHint": {
+    "description": "Active Directory bind username field hint",
+    "value": "e.g. svc-ea@example.com"
+  },
+  "enterpriseAssistant.ad.bindPassword": {
+    "description": "Active Directory bind password field label",
+    "value": "Bind password"
+  },
+  "enterpriseAssistant.ad.computerOU": {
+    "description": "Active Directory computer OU field label",
+    "value": "Computer OU"
+  },
+  "enterpriseAssistant.ad.computerOUHint": {
+    "description": "Active Directory computer OU field hint",
+    "value": "Container for device computer accounts, relative to the domain, e.g. CN=Computers"
+  },
+  "enterpriseAssistant.ad.securityGroups": {
+    "description": "Active Directory security groups field label",
+    "value": "Security groups"
+  },
+  "enterpriseAssistant.ad.securityGroupsHint": {
+    "description": "Active Directory security groups field hint",
+    "value": "Pick a loaded group or type a distinguished name and press Enter"
+  },
+  "enterpriseAssistant.ad.insecureSkipVerify": {
+    "description": "Active Directory skip TLS verification checkbox label",
+    "value": "Skip TLS certificate verification"
+  },
+  "enterpriseAssistant.ad.insecureSkipVerifyWarning": {
+    "description": "Warning shown when TLS verification is skipped",
+    "value": "Insecure: the domain controller's certificate is not checked. Use only for testing."
+  },
+  "enterpriseAssistant.ca.title": {
+    "description": "Certificate Authority section title",
+    "value": "Certificate Authority"
+  },
+  "enterpriseAssistant.ca.authority": {
+    "description": "Certificate Authority select label",
+    "value": "Certificate Authority"
+  },
+  "enterpriseAssistant.ca.authorityHint": {
+    "description": "Shown before the certificate authorities are loaded",
+    "value": "Load the certificate authorities published in Active Directory, or enter them below."
+  },
+  "enterpriseAssistant.ca.host": {
+    "description": "Certificate Authority host field label",
+    "value": "CA host"
+  },
+  "enterpriseAssistant.ca.name": {
+    "description": "Certificate Authority name field label",
+    "value": "CA name"
+  },
+  "enterpriseAssistant.ca.template": {
+    "description": "Certificate template field label",
+    "value": "Certificate template"
+  },
+  "enterpriseAssistant.ca.commonName": {
+    "description": "Certificate common name field label",
+    "value": "Common name"
+  },
+  "enterpriseAssistant.ca.altNames": {
+    "description": "Certificate subject alternative names label",
+    "value": "Alternative names"
+  },
+  "enterpriseAssistant.nameField.distinguishedname": {
+    "description": "Certificate name option: distinguished name",
+    "value": "Distinguished name"
+  },
+  "enterpriseAssistant.nameField.dnsfqdn": {
+    "description": "Certificate name option: DNS FQDN",
+    "value": "DNS FQDN"
+  },
+  "enterpriseAssistant.nameField.hostname": {
+    "description": "Certificate name option: host name",
+    "value": "Host name"
+  },
+  "enterpriseAssistant.nameField.userprincipalname": {
+    "description": "Certificate name option: user principal name",
+    "value": "User principal name"
+  },
+  "enterpriseAssistant.nameField.samaccountname": {
+    "description": "Certificate name option: SAM account name",
+    "value": "SAM account name"
+  },
+  "enterpriseAssistant.nameField.uuid": {
+    "description": "Certificate name option: UUID",
+    "value": "UUID"
+  },
+  "enterpriseAssistant.loadFromAD": {
+    "description": "Button that loads choices from Active Directory",
+    "value": "Load from AD"
+  },
+  "enterpriseAssistant.test": {
+    "description": "Button that tests the Active Directory and CA connections",
+    "value": "Test connection"
+  },
+  "enterpriseAssistant.saved": {
+    "description": "Enterprise Assistant settings saved message",
+    "value": "Enterprise Assistant settings saved"
+  },
+  "enterpriseAssistant.errorLoad": {
+    "description": "Enterprise Assistant settings load failure message",
+    "value": "Failed to load the Enterprise Assistant settings"
+  },
+  "enterpriseAssistant.errorSave": {
+    "description": "Enterprise Assistant settings save failure message",
+    "value": "Failed to save the Enterprise Assistant settings"
+  },
+  "enterpriseAssistant.errorTest": {
+    "description": "Enterprise Assistant connection test failure message",
+    "value": "Failed to test the connection"
+  },
+  "enterpriseAssistant.errorLookup": {
+    "description": "Failure loading choices from Active Directory",
+    "value": "Failed to load from Active Directory"
+  },
   "deviceDetail.remotePlatformErase": {
     "description": "Category name for Remote Platform Erase",
     "value": "Remote Platform Erase"
