@@ -124,4 +124,19 @@ describe('NavbarComponent', () => {
     fixture.detectChanges()
     expect(fixture.nativeElement.querySelector('a[routerlink="/download-rpc"]')).toBeNull()
   })
+
+  it('should show Enterprise Assistant right after 802.1x (enterprise mode)', () => {
+    component.cloudMode = false
+    fixture.detectChanges()
+    const links: string[] = Array.from(fixture.nativeElement.querySelectorAll('mat-nav-list > a')).map((a: any) =>
+      a.getAttribute('routerlink')
+    )
+    expect(links.indexOf('/enterprise-assistant')).toBe(links.indexOf('/ieee8021x') + 1)
+  })
+
+  it('should not show Enterprise Assistant in cloud mode', () => {
+    component.cloudMode = true
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('a[routerlink="/enterprise-assistant"]')).toBeNull()
+  })
 })

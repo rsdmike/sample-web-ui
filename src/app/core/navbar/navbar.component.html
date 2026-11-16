@@ -16,6 +16,12 @@
     <mat-icon matListItemIcon>security</mat-icon>
     <span i18n="navlink">{{ 'ieee8021x.headerd.ieeeTitle.value' | translate }}</span>
   </a>
+  @if (cloudMode === false) {
+    <a mat-list-item routerLink="/enterprise-assistant" routerLinkActive="active">
+      <mat-icon matListItemIcon>admin_panel_settings</mat-icon
+      ><span i18n="navlink">{{ 'enterpriseAssistant.title.value' | translate }}</span>
+    </a>
+  }
   <a mat-list-item routerLink="/wireless" routerLinkActive="active">
     <mat-icon matListItemIcon>wifi</mat-icon
     ><span i18n="navlink">{{ 'wireless.header.wirelessTitle.value' | translate }}</span>
